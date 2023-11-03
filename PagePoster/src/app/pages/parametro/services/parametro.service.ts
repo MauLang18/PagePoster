@@ -1,0 +1,77 @@
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { endpoints } from "@shared/apis/endpoints";
+import { getIcon } from "@shared/functions/helpers";
+import {
+  BaseApiResponse,
+  BaseResponse,
+} from "@shared/models/base-api-response.interface";
+import { AlertService } from "@shared/services/alert.service";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import {
+  ParametroById,
+  ParametroResponse,
+} from "../models/parametro-response.interface";
+import { environment as env } from "./../../../../environments/environment";
+import { ParametroRequest } from "../models/parametro-request.interface";
+
+@Injectable({
+  providedIn: "root",
+})
+export class ParametroService {
+  constructor(private _http: HttpClient, private _alert: AlertService) {}
+
+  GetAll(
+    size: string,
+    sort: string,
+    order: string,
+    page: number,
+    getInputs: string
+  ): Observable<BaseApiResponse> {
+    const requestUrl = `${env.api}${
+      endpoints.LIST_PARAMETRO
+    }?records=${size}&sort=${sort}&order=${order}&numPage=${
+      page + 1
+    }${getInputs}`;
+
+    return this._http.get<BaseApiResponse>(requestUrl).pipe(
+      map((resp) => {
+        resp.data.items.forEach(function (prov: ParametroResponse) {
+          switch (prov.estado) {
+            case 0:
+              prov.badgeColor = "text-gray bg-gray-light";
+              break;
+            case 1:
+              prov.badgeColor = "text-green bg-green-light";
+              break;
+            default:
+              prov.badgeColor = "text-gray bg-gray-light";
+              break;
+          }
+          prov.icEdit = getIcon("icEdit", "Editar Parámetro", true);
+        });
+        return resp;
+      })
+    );
+  }
+
+  parametroById(id: number): Observable<ParametroById> {
+    const requestUrl = `${env.api}${endpoints.PARAMETRO_BY_ID}${id}`;
+
+    return this._http.get(requestUrl).pipe(
+      map((resp: BaseResponse) => {
+        return resp.data;
+      })
+    );
+  }
+
+  parametroEdit(
+    id: number,
+    proveedor: ParametroRequest
+  ): Observable<BaseResponse> {
+    const requestUrl = `${env.api}${endpoints.EDIT_PARAMETRO}${id}`;
+
+    return this._http.put<BaseResponse>(requestUrl, proveedor);
+  }
+}
