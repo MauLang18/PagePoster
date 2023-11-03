@@ -23,6 +23,14 @@ const childrenRoutes: VexRoutes = [
     },
   },
   {
+    path: "servicioBeneficio",
+    loadChildren: () =>
+      import("./pages/servicio/servicio.module").then((m) => m.ServicioModule),
+    data: {
+      containerEnabled: true,
+    },
+  },
+  {
     path: "parametros",
     loadChildren: () =>
       import("./pages/parametro/parametro.module").then(

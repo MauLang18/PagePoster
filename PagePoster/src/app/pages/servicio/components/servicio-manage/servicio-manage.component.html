@@ -1,7 +1,7 @@
-<form (ngSubmit)="usuarioSave()" [formGroup]="form">
+<form (ngSubmit)="servicioSave()" [formGroup]="form">
     <div mat-dialog-title class="flex justify-between">
         <h2 class="headline m-0 text-xl text-accent">
-            <strong>Gestión de Parámetro</strong>
+            <strong>Gestión de Servicio y Beneficio</strong>
         </h2>
         <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
             <mat-icon [icIcon]="icClose"></mat-icon>
@@ -11,10 +11,10 @@
     <mat-dialog-content>
         <div fxLayout="row" fxLayoutGap="16px">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>Parámetro</mat-label>
-                <input matInput formControlName="parametro" />
-                <mat-error *ngIf="form.get('parametro').hasError('required')">
-                    Campo Parámetro es requerido.
+                <mat-label>Título</mat-label>
+                <input matInput formControlName="titulo" />
+                <mat-error *ngIf="form.get('titulo').hasError('required')">
+                    Campo Título es requerido.
                 </mat-error>
             </mat-form-field>
         </div>
@@ -24,20 +24,24 @@
                 <mat-label>Descripción</mat-label>
                 <textarea matInput formControlName="descripcion"></textarea>
                 <mat-error *ngIf="form.get('descripcion').hasError('required')">
-                    Campo Descripción requerido.
+                    Campo Descripción es requerido.
                 </mat-error>
             </mat-form-field>
         </div>
 
         <div fxLayout="row" fxLayoutGap="16px">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>Valor</mat-label>
-                <input matInput formControlName="valor" />
-                <mat-error *ngIf="form.get('valor').hasError('required')">
-                    Campo Valor requerido.
-                </mat-error>
+                <input type="file" matInput formControlName="image" accept="image/*"
+                    (change)="onFileSelected($event)" />
             </mat-form-field>
         </div>
+
+        <div fxLayout="row" fxLayoutGap="16px">
+            <img *ngIf="selectedImage" [src]="selectedImage" alt="Imagen seleccionada"
+                style="width: 400px; height: 100px;" />
+            <div *ngIf="!selectedImage">No se ha seleccionado una imagen.</div>
+        </div>
+        <br>
 
         <div fxLayout="row" fxLayoutGap="16px">
             <mat-form-field appearance="outline" fxFlex="100">

@@ -19,7 +19,13 @@ export class ToolbarUserComponent implements OnInit {
               private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.username = localStorage.getItem('username');
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return "";
+    }
+
+    var dataUser = JSON.parse(atob(token.split(".")[1]));
+    this.username = dataUser.family_name;
   }
 
   showPopover(originRef: HTMLElement) {

@@ -2,8 +2,8 @@
     <div class="px-gutter pt-6 pb-20 bg-primary flex-none">
         <div class="flex items-center justify-between">
             <h2 class="headline text-primary-contrast m-o flex items-center w-full max-w-xxxl mr-6">
-                <ic-icon @scaleIn [icon]="component.icBoletin" class="hidden sm:block"></ic-icon>
-                <span @fadeInRight class="ml-4 block"> Gestión de Boletines</span>
+                <ic-icon @scaleIn [icon]="component.icBanner" class="hidden sm:block"></ic-icon>
+                <span @fadeInRight class="ml-4 block"> Gestión de Servicios y Beneficios</span>
             </h2>
 
             <div class="flex items-center justify-end w-full">
@@ -23,7 +23,7 @@
                     [items]="component.menuItems"></app-menu>
 
                 <div class="card h-full overflow-hidden flex-auto">
-                    <app-list-table (rowClick)="rowClick($event)" [service]="_boletinService"
+                    <app-list-table (rowClick)="rowClick($event)" [service]="_servicioService"
                         [columns]="component.tableColumns" [sortBy]="component.initialSort"
                         [sortDir]="component.initialSortDir" [getInputs]="component.getInputs">
                     </app-list-table>-

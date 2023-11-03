@@ -20,6 +20,7 @@ import icUser from "@iconify/icons-ic/twotone-supervised-user-circle";
 import icParams from "@iconify/icons-ic/twotone-list";
 import icBanner from "@iconify/icons-ic/add-to-photos";
 import icBoletin from "@iconify/icons-ic/twotone-feed";
+import icServicios from "@iconify/icons-ic/twotone-amp-stories";
 
 @Injectable({
   providedIn: "root",
@@ -108,6 +109,10 @@ export class IconsService {
 
     if (icon == "icBoletin") {
       return icBoletin;
+    }
+
+    if (icon == "icServicios") {
+      return icServicios;
     }
   }
 }

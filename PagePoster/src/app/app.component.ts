@@ -86,6 +86,12 @@ export class AppComponent {
       },
       {
         type: "link",
+        label: "Servicios y Beneficios",
+        route: "servicioBeneficio",
+        icon: IconsService.prototype.getIcon("icServicios"),
+      },
+      {
+        type: "link",
         label: "Parámetros",
         route: "parametros",
         icon: IconsService.prototype.getIcon("icParams"),
