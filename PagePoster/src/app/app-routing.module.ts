@@ -7,6 +7,22 @@ import { AuthGuard } from "@shared/guards/auth.guard";
 
 const childrenRoutes: VexRoutes = [
   {
+    path: "bannerPrincipal",
+    loadChildren: () =>
+      import("./pages/banner/banner.module").then((m) => m.BannerModule),
+    data: {
+      containerEnabled: true,
+    },
+  },
+  {
+    path: "boletin",
+    loadChildren: () =>
+      import("./pages/boletin/boletin.module").then((m) => m.BoletinModule),
+    data: {
+      containerEnabled: true,
+    },
+  },
+  {
     path: "parametros",
     loadChildren: () =>
       import("./pages/parametro/parametro.module").then(

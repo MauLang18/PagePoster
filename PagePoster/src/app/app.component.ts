@@ -74,6 +74,18 @@ export class AppComponent {
     this.navigationService.items = [
       {
         type: "link",
+        label: "Banner Principal",
+        route: "bannerPrincipal",
+        icon: IconsService.prototype.getIcon("icBanner"),
+      },
+      {
+        type: "link",
+        label: "Boletín",
+        route: "boletin",
+        icon: IconsService.prototype.getIcon("icBoletin"),
+      },
+      {
+        type: "link",
         label: "Parámetros",
         route: "parametros",
         icon: IconsService.prototype.getIcon("icParams"),

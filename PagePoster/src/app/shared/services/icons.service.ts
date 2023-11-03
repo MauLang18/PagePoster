@@ -18,6 +18,8 @@ import icDashboard from "@iconify/icons-ic/twotone-dashboard";
 import icCloudDownload from "@iconify/icons-ic/twotone-cloud-download";
 import icUser from "@iconify/icons-ic/twotone-supervised-user-circle";
 import icParams from "@iconify/icons-ic/twotone-list";
+import icBanner from "@iconify/icons-ic/add-to-photos";
+import icBoletin from "@iconify/icons-ic/twotone-feed";
 
 @Injectable({
   providedIn: "root",
@@ -98,6 +100,14 @@ export class IconsService {
 
     if (icon == "icParams") {
       return icParams;
+    }
+
+    if (icon == "icBanner") {
+      return icBanner;
+    }
+
+    if (icon == "icBoletin") {
+      return icBoletin;
     }
   }
 }

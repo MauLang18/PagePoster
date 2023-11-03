@@ -7,7 +7,6 @@ import { scaleIn400ms } from "src/@vex/animations/scale-in.animation";
 import { fadeInRight400ms } from "src/@vex/animations/fade-in-right.animation";
 import { FiltersBox } from "@shared/models/search-options.interface";
 import { ParametroResponse } from "../../models/parametro-response.interface";
-import Swal from "sweetalert2";
 import { ParametroManageComponent } from "../parametro-manage/parametro-manage.component";
 import { RowClick } from "@shared/models/row-click.interface";
 import { componentSettings } from "./parametro-list-config";

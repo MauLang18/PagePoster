@@ -1,7 +1,7 @@
-<form (ngSubmit)="usuarioSave()" [formGroup]="form">
+<form (ngSubmit)="boletinSave()" [formGroup]="form">
     <div mat-dialog-title class="flex justify-between">
         <h2 class="headline m-0 text-xl text-accent">
-            <strong>Gestión de Usuario</strong>
+            <strong>Gestión de Boletín</strong>
         </h2>
         <button class="text-secondary" mat-dialog-close mat-icon-button type="button">
             <mat-icon [icIcon]="icClose"></mat-icon>
@@ -11,23 +11,27 @@
     <mat-dialog-content>
         <div fxLayout="row" fxLayoutGap="16px">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>Usuario</mat-label>
-                <input matInput formControlName="usuario" />
-                <mat-error *ngIf="form.get('usuario').hasError('required')">
-                    Campo Usuario es requerido.
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="nombre" />
+                <mat-error *ngIf="form.get('nombre').hasError('required')">
+                    Campo Nombre es requerido.
                 </mat-error>
             </mat-form-field>
         </div>
 
         <div fxLayout="row" fxLayoutGap="16px">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>Contraseña</mat-label>
-                <input matInput formControlName="pass" />
-                <!-- <mat-error *ngIf="form.get('password').hasError('required')">
-                    Campo Correo es requerido.
-                </mat-error> -->
+                <input type="file" matInput formControlName="image" accept="image/*"
+                    (change)="onFileSelected($event)" />
             </mat-form-field>
         </div>
+
+        <div fxLayout="row" fxLayoutGap="16px">
+            <img *ngIf="selectedImage" [src]="selectedImage" alt="Imagen seleccionada"
+                style="width: 400px; height: 250px;" />
+            <div *ngIf="!selectedImage">No se ha seleccionado una imagen.</div>
+        </div>
+        <br>
 
         <div fxLayout="row" fxLayoutGap="16px">
             <mat-form-field appearance="outline" fxFlex="100">
