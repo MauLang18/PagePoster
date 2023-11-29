@@ -1,26 +1,31 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <title>PagePoster</title>
-  <base href="/">
-  <meta http-equiv="Content-Security-Policy" content="
-      script-src 'self' https://localhost:7072;
+  <head>
+    <meta charset="utf-8" />
+    <title>PagePoster</title>
+    <base href="/" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+      script-src 'self' http://190.113.124.155:9090;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-      connect-src 'self' https://localhost:7072;
-  ">
-  <!-- <meta http-equiv="Content-Security-Policy" content="
+      connect-src 'self' http://190.113.124.155:9090;
+  "
+    />
+    <!-- <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     "> -->
-  <meta content="width=device-width, initial-scale=1" name="viewport">
-  <link href="favicon.ico" rel="icon" type="image/x-icon">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link href="favicon.ico" rel="icon" type="image/x-icon" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<body dir="ltr">
-  <!--<style>
+  <body dir="ltr">
+    <!--<style>
     #vex-splash-screen {
       display: block;
       position: absolute;
@@ -110,19 +115,17 @@
     }
   </style>-->
 
-  <div id="vex-splash-screen">
-    <div class="wrapper">
-      <div class="ball-scale-multiple">
-        <div></div>
-        <div></div>
-        <div></div>
+    <div id="vex-splash-screen">
+      <div class="wrapper">
+        <div class="ball-scale-multiple">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <vex-root></vex-root>
-  <app-redirect></app-redirect>
-
-</body>
-
+    <vex-root></vex-root>
+    <app-redirect></app-redirect>
+  </body>
 </html>
