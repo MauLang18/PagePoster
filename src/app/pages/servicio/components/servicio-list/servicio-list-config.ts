@@ -143,7 +143,7 @@ const getInputs: string = "";
 
 export const componentSettings = {
   //ICONS
-  icServicio: IconsService.prototype.getIcon("icServicio"),
+  icServicios: IconsService.prototype.getIcon("icServicios"),
   icCalendarMonth: IconsService.prototype.getIcon("icCalendarMonth"),
   //LAYOUT SETTINGS
   menuOpen: false,

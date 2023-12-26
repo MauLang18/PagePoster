@@ -9,18 +9,41 @@ import { endpoints } from "@shared/apis/endpoints";
 import { getIcon } from "@shared/functions/helpers";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { AlertService } from "@shared/services/alert.service";
-import { Observable } from "rxjs";
+import { Observable, Subject } from 'rxjs';
 import { ServicioRequest } from "../models/servicio-request.interface";
 import {
   ServicioById,
   ServicioResponse,
 } from "../models/servicio-response.interface";
+import { SignalRService } from '@shared/services/signalr.service';
 
 @Injectable({
   providedIn: "root",
 })
 export class ServicioService {
-  constructor(private _http: HttpClient, private _alert: AlertService) {}
+  private servicioUpdateSubject: Subject<ServicioResponse> = new Subject<ServicioResponse>();
+
+  constructor(private _http: HttpClient, private _alert: AlertService, private _signalRService: SignalRService,) {
+    this.configureSignalRListeners();
+  }
+
+  private configureSignalRListeners(): void {
+    this._signalRService.getEventListener('ServicioBeneficioRegistrado').subscribe((response: ServicioResponse) => {
+      this.servicioUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('ServicioBeneficioActualizado').subscribe((response: ServicioResponse) => {
+      this.servicioUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('ServicioBeneficioEliminado').subscribe((id: number) => {
+      this.servicioUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
+    });
+  }
+
+  getUpdates(): Observable<ServicioResponse> {
+    return this.servicioUpdateSubject.asObservable();
+  }
 
   GetAll(
     size: string,

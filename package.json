@@ -30,6 +30,7 @@
     "@iconify/icons-fa-solid": "^1.1.1",
     "@iconify/icons-ic": "^1.1.6",
     "@iconify/icons-logos": "^1.1.10",
+    "@microsoft/signalr": "^8.0.0",
     "@ngneat/until-destroy": "~8.0.4",
     "@ngx-loading-bar/core": "^5.1.2",
     "@ngx-loading-bar/router": "^5.1.2",

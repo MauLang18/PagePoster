@@ -52,7 +52,7 @@ import { IconModule } from "@visurel/iconify-angular";
     },
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: { apparence: "standard" } as MatFormFieldDefaultOptions,
+      useValue: { appearance: "standard" } as MatFormFieldDefaultOptions,
     },
   ],
 })
@@ -90,6 +90,12 @@ export class ListTableComponent<T> implements OnInit, AfterViewInit, OnChanges {
   ngOnInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    // Suscribirse a eventos de UsuarioService o cualquier otro servicio que emita actualizaciones
+    this.service.getUpdates().subscribe((updatedEntity: any) => {
+  this.getDataByService();
+});
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {

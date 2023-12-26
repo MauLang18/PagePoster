@@ -5,7 +5,7 @@ import {
   BaseResponse,
 } from "@shared/models/base-api-response.interface";
 import { AlertService } from "@shared/services/alert.service";
-import { Observable } from "rxjs";
+import { Observable, Subject } from 'rxjs';
 import { environment as env } from "./../../../../environments/environment";
 import { endpoints } from "@shared/apis/endpoints";
 import { map } from "rxjs/operators";
@@ -15,12 +15,33 @@ import {
 } from "../models/banner-response.interface";
 import { getIcon } from "@shared/functions/helpers";
 import { BannerRequest } from "../models/banner-request.interface";
+import { SignalRService } from '@shared/services/signalr.service';
 
 @Injectable({
   providedIn: "root",
 })
 export class BannerService {
-  constructor(private _http: HttpClient, private _alert: AlertService) {}
+  private bannerUpdateSubject: Subject<BannerResponse> = new Subject<BannerResponse>();
+
+  constructor(private _http: HttpClient, private _alert: AlertService, private _signalRService: SignalRService,) {this.configureSignalRListeners();}
+
+  private configureSignalRListeners(): void {
+    this._signalRService.getEventListener('BannerRegistrado').subscribe((response: BannerResponse) => {
+      this.bannerUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('BannerActualizado').subscribe((response: BannerResponse) => {
+      this.bannerUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('BannerEliminado').subscribe((id: number) => {
+      this.bannerUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
+    });
+  }
+
+  getUpdates(): Observable<BannerResponse> {
+    return this.bannerUpdateSubject.asObservable();
+  }
 
   GetAll(
     size: string,

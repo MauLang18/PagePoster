@@ -1,5 +1,4 @@
 import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AlertService } from "@shared/services/alert.service";
@@ -15,12 +14,40 @@ import {
 } from "../models/usuario-response.interface";
 import { getIcon } from "@shared/functions/helpers";
 import { UsuarioRequest } from "../models/usuario-request.interface";
+import { SignalRService } from '@shared/services/signalr.service';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class UsuarioService {
-  constructor(private _http: HttpClient, private _alert: AlertService) {}
+  private usuarioUpdateSubject: Subject<UsuarioResponse> = new Subject<UsuarioResponse>();
+
+  constructor(
+    private _http: HttpClient,
+    private _signalRService: SignalRService,
+    private _alert: AlertService
+  ) {
+    this.configureSignalRListeners();
+  }
+
+  private configureSignalRListeners(): void {
+    this._signalRService.getEventListener('UsuarioRegistrado').subscribe((response: UsuarioResponse) => {
+      this.usuarioUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('UsuarioActualizado').subscribe((response: UsuarioResponse) => {
+      this.usuarioUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('UsuarioEliminado').subscribe((id: number) => {
+      this.usuarioUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
+    });
+  }
+
+  getUpdates(): Observable<UsuarioResponse> {
+    return this.usuarioUpdateSubject.asObservable();
+  }
 
   GetAll(
     size: string,

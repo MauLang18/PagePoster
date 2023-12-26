@@ -7,7 +7,7 @@ import {
   BaseResponse,
 } from "@shared/models/base-api-response.interface";
 import { AlertService } from "@shared/services/alert.service";
-import { Observable } from "rxjs";
+import { Observable, Subject } from 'rxjs';
 import { map } from "rxjs/operators";
 import {
   ParametroById,
@@ -15,12 +15,33 @@ import {
 } from "../models/parametro-response.interface";
 import { environment as env } from "./../../../../environments/environment";
 import { ParametroRequest } from "../models/parametro-request.interface";
+import { SignalRService } from '@shared/services/signalr.service';
 
 @Injectable({
   providedIn: "root",
 })
 export class ParametroService {
-  constructor(private _http: HttpClient, private _alert: AlertService) {}
+  private parametroUpdateSubject: Subject<ParametroResponse> = new Subject<ParametroResponse>();
+
+  constructor(private _http: HttpClient, private _alert: AlertService, private _signalRService: SignalRService,) {this.configureSignalRListeners();}
+
+  private configureSignalRListeners(): void {
+    this._signalRService.getEventListener('ParametroRegistrado').subscribe((response: ParametroResponse) => {
+      this.parametroUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('ParametroActualizado').subscribe((response: ParametroResponse) => {
+      this.parametroUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('ParametroEliminado').subscribe((id: number) => {
+      this.parametroUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
+    });
+  }
+
+  getUpdates(): Observable<ParametroResponse> {
+    return this.parametroUpdateSubject.asObservable();
+  }
 
   GetAll(
     size: string,

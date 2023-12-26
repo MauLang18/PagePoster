@@ -6,7 +6,7 @@ import {
   BaseResponse,
 } from "@shared/models/base-api-response.interface";
 import { AlertService } from "@shared/services/alert.service";
-import { Observable } from "rxjs";
+import { Observable, Subject } from 'rxjs';
 import { environment as env } from "./../../../../environments/environment";
 import {
   BoletinById,
@@ -15,12 +15,33 @@ import {
 import { map } from "rxjs/operators";
 import { getIcon } from "@shared/functions/helpers";
 import { BoletinRequest } from "../models/boletin-request.interface";
+import { SignalRService } from '@shared/services/signalr.service';
 
 @Injectable({
   providedIn: "root",
 })
 export class BoletinService {
-  constructor(private _http: HttpClient, private _alert: AlertService) {}
+  private boletinUpdateSubject: Subject<BoletinResponse> = new Subject<BoletinResponse>();
+
+  constructor(private _http: HttpClient, private _alert: AlertService, private _signalRService: SignalRService,) {this.configureSignalRListeners();}
+
+  private configureSignalRListeners(): void {
+    this._signalRService.getEventListener('BoletinRegistrado').subscribe((response: BoletinResponse) => {
+      this.boletinUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('BoletinActualizado').subscribe((response: BoletinResponse) => {
+      this.boletinUpdateSubject.next(response);
+    });
+
+    this._signalRService.getEventListener('BoletinEliminado').subscribe((id: number) => {
+      this.boletinUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
+    });
+  }
+
+  getUpdates(): Observable<BoletinResponse> {
+    return this.boletinUpdateSubject.asObservable();
+  }
 
   GetAll(
     size: string,
