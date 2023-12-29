@@ -6,7 +6,7 @@ import {
   BaseResponse,
 } from "@shared/models/base-api-response.interface";
 import { AlertService } from "@shared/services/alert.service";
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject } from "rxjs";
 import { environment as env } from "./../../../../environments/environment";
 import {
   BoletinById,
@@ -15,28 +15,49 @@ import {
 import { map } from "rxjs/operators";
 import { getIcon } from "@shared/functions/helpers";
 import { BoletinRequest } from "../models/boletin-request.interface";
-import { SignalRService } from '@shared/services/signalr.service';
+import { SignalRService } from "@shared/services/signalr.service";
+import { SignalR2Service } from "@shared/services/signalr2.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class BoletinService {
-  private boletinUpdateSubject: Subject<BoletinResponse> = new Subject<BoletinResponse>();
+  private boletinUpdateSubject: Subject<BoletinResponse> =
+    new Subject<BoletinResponse>();
 
-  constructor(private _http: HttpClient, private _alert: AlertService, private _signalRService: SignalRService,) {this.configureSignalRListeners();}
+  constructor(
+    private _http: HttpClient,
+    private _alert: AlertService,
+    private _signalRService: SignalRService,
+    private _signalR2Service: SignalR2Service
+  ) {
+    this.configureSignalRListeners();
+  }
 
   private configureSignalRListeners(): void {
-    this._signalRService.getEventListener('BoletinRegistrado').subscribe((response: BoletinResponse) => {
-      this.boletinUpdateSubject.next(response);
-    });
+    this._signalRService
+      .getEventListener("BoletinRegistrado")
+      .subscribe((response: BoletinResponse) => {
+        this.boletinUpdateSubject.next(response);
+      });
 
-    this._signalRService.getEventListener('BoletinActualizado').subscribe((response: BoletinResponse) => {
-      this.boletinUpdateSubject.next(response);
-    });
+    this._signalRService
+      .getEventListener("BoletinActualizado")
+      .subscribe((response: BoletinResponse) => {
+        this.boletinUpdateSubject.next(response);
+      });
 
-    this._signalRService.getEventListener('BoletinEliminado').subscribe((id: number) => {
-      this.boletinUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
-    });
+    this._signalR2Service
+      .getEventListener("BoletinActualizado2")
+      .subscribe((response: BoletinResponse) => {
+        this.boletinUpdateSubject.next(response);
+      });
+
+    this._signalRService
+      .getEventListener("BoletinEliminado")
+      .subscribe((id: number) => {
+        this.boletinUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
+      });
   }
 
   getUpdates(): Observable<BoletinResponse> {
@@ -70,6 +91,17 @@ export class BoletinService {
               prov.badgeColor = "text-gray bg-gray-light";
               break;
           }
+          switch (prov.programacion) {
+            case 0:
+              prov.badgeColor2 = "text-gray bg-gray-light";
+              break;
+            case 1:
+              prov.badgeColor2 = "text-green bg-green-light";
+              break;
+            default:
+              prov.badgeColor2 = "text-gray bg-gray-light";
+              break;
+          }
           prov.icEdit = getIcon("icEdit", "Editar Boletín", true);
           prov.icDelete = getIcon("icDelete", "Eliminar Boletín", true);
         });
@@ -100,6 +132,17 @@ export class BoletinService {
     // Agregar otros campos de formulario según sea necesario
     formData.append("nombre", boletin.nombre);
     formData.append("estado", boletin.estado.toString());
+    formData.append("programacion", boletin.programacion.toString());
+
+    // Verificar si programacion es igual a 0 y establecer fechaProgramacion en la fecha actual
+    if (boletin.programacion === 0) {
+      formData.append("fechaProgramacion", this.getFormattedDate());
+    } else {
+      formData.append(
+        "fechaProgramacion",
+        boletin.fechaProgramacion.toString()
+      );
+    }
 
     // Configurar los encabezados para la solicitud
     const headers = new HttpHeaders();
@@ -130,6 +173,17 @@ export class BoletinService {
     // Agregar otros campos de formulario según sea necesario
     formData.append("nombre", boletin.nombre);
     formData.append("estado", boletin.estado.toString());
+    formData.append("programacion", boletin.programacion.toString());
+
+    // Verificar si programacion es igual a 0 y establecer fechaProgramacion en la fecha actual
+    if (boletin.programacion === 0) {
+      formData.append("fechaProgramacion", this.getFormattedDate());
+    } else {
+      formData.append(
+        "fechaProgramacion",
+        boletin.fechaProgramacion.toString()
+      );
+    }
 
     // Configurar los encabezados para la solicitud
     const headers = new HttpHeaders();
@@ -149,5 +203,16 @@ export class BoletinService {
         }
       })
     );
+  }
+
+  getFormattedDate(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // +1 porque enero es 0
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 }

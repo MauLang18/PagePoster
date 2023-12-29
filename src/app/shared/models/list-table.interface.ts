@@ -13,6 +13,7 @@ export interface TableColumn<T> {
     | "image"
     | "button"
     | "badge"
+    | "badge2"
     | "icon";
   visible: boolean;
   sort: boolean;

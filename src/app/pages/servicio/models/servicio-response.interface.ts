@@ -5,8 +5,12 @@ export interface ServicioResponse {
   imagen: string;
   fechaCreacionAuditoria: Date;
   estado: number;
+  programacion: number;
+  fechaProgramacion: Date;
   estadoServicioBeneficio: string;
+  programacionServicioBeneficio: string;
   badgeColor: string;
+  badgeColor2: string;
   icEdit: any;
   icDelete: any;
 }
@@ -17,4 +21,6 @@ export interface ServicioById {
   descripcion: string;
   imagen: string;
   estado: number;
+  programacion: number;
+  fechaProgramacion: Date;
 }

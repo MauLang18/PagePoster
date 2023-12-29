@@ -5,7 +5,7 @@ import {
   BaseResponse,
 } from "@shared/models/base-api-response.interface";
 import { AlertService } from "@shared/services/alert.service";
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject } from "rxjs";
 import { environment as env } from "./../../../../environments/environment";
 import { endpoints } from "@shared/apis/endpoints";
 import { map } from "rxjs/operators";
@@ -15,28 +15,49 @@ import {
 } from "../models/banner-response.interface";
 import { getIcon } from "@shared/functions/helpers";
 import { BannerRequest } from "../models/banner-request.interface";
-import { SignalRService } from '@shared/services/signalr.service';
+import { SignalRService } from "@shared/services/signalr.service";
+import { SignalR2Service } from "@shared/services/signalr2.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class BannerService {
-  private bannerUpdateSubject: Subject<BannerResponse> = new Subject<BannerResponse>();
+  private bannerUpdateSubject: Subject<BannerResponse> =
+    new Subject<BannerResponse>();
 
-  constructor(private _http: HttpClient, private _alert: AlertService, private _signalRService: SignalRService,) {this.configureSignalRListeners();}
+  constructor(
+    private _http: HttpClient,
+    private _alert: AlertService,
+    private _signalRService: SignalRService,
+    private _signalR2Service: SignalR2Service
+  ) {
+    this.configureSignalRListeners();
+  }
 
   private configureSignalRListeners(): void {
-    this._signalRService.getEventListener('BannerRegistrado').subscribe((response: BannerResponse) => {
-      this.bannerUpdateSubject.next(response);
-    });
+    this._signalRService
+      .getEventListener("BannerRegistrado")
+      .subscribe((response: BannerResponse) => {
+        this.bannerUpdateSubject.next(response);
+      });
 
-    this._signalRService.getEventListener('BannerActualizado').subscribe((response: BannerResponse) => {
-      this.bannerUpdateSubject.next(response);
-    });
+    this._signalRService
+      .getEventListener("BannerActualizado")
+      .subscribe((response: BannerResponse) => {
+        this.bannerUpdateSubject.next(response);
+      });
 
-    this._signalRService.getEventListener('BannerEliminado').subscribe((id: number) => {
-      this.bannerUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
-    });
+    this._signalR2Service
+      .getEventListener("BannerActualizado2")
+      .subscribe((response: BannerResponse) => {
+        this.bannerUpdateSubject.next(response);
+      });
+
+    this._signalRService
+      .getEventListener("BannerEliminado")
+      .subscribe((id: number) => {
+        this.bannerUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
+      });
   }
 
   getUpdates(): Observable<BannerResponse> {
@@ -70,6 +91,17 @@ export class BannerService {
               prov.badgeColor = "text-gray bg-gray-light";
               break;
           }
+          switch (prov.programacion) {
+            case 0:
+              prov.badgeColor2 = "text-gray bg-gray-light";
+              break;
+            case 1:
+              prov.badgeColor2 = "text-green bg-green-light";
+              break;
+            default:
+              prov.badgeColor2 = "text-gray bg-gray-light";
+              break;
+          }
           prov.icEdit = getIcon("icEdit", "Editar Banner", true);
           prov.icDelete = getIcon("icDelete", "Eliminar Banner", true);
         });
@@ -100,6 +132,14 @@ export class BannerService {
     // Agregar otros campos de formulario según sea necesario
     formData.append("nombre", banner.nombre);
     formData.append("estado", banner.estado.toString());
+    formData.append("programacion", banner.programacion.toString());
+
+    // Verificar si programacion es igual a 0 y establecer fechaProgramacion en la fecha actual
+    if (banner.programacion === 0) {
+      formData.append("fechaProgramacion", this.getFormattedDate());
+    } else {
+      formData.append("fechaProgramacion", banner.fechaProgramacion.toString());
+    }
 
     // Configurar los encabezados para la solicitud
     const headers = new HttpHeaders();
@@ -127,6 +167,14 @@ export class BannerService {
     // Agregar otros campos de formulario según sea necesario
     formData.append("nombre", banner.nombre);
     formData.append("estado", banner.estado.toString());
+    formData.append("programacion", banner.programacion.toString());
+
+    // Verificar si programacion es igual a 0 y establecer fechaProgramacion en la fecha actual
+    if (banner.programacion === 0) {
+      formData.append("fechaProgramacion", this.getFormattedDate());
+    } else {
+      formData.append("fechaProgramacion", banner.fechaProgramacion.toString());
+    }
 
     // Configurar los encabezados para la solicitud
     const headers = new HttpHeaders();
@@ -146,5 +194,16 @@ export class BannerService {
         }
       })
     );
+  }
+
+  getFormattedDate(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // +1 porque enero es 0
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 }

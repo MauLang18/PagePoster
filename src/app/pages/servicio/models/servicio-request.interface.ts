@@ -3,4 +3,6 @@ export interface ServicioRequest {
   descripcion: string;
   imagen: File;
   estado: number;
+  programacion: number;
+  fechaProgramacion: Date;
 }

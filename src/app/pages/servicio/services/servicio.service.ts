@@ -9,36 +9,55 @@ import { endpoints } from "@shared/apis/endpoints";
 import { getIcon } from "@shared/functions/helpers";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { AlertService } from "@shared/services/alert.service";
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject } from "rxjs";
 import { ServicioRequest } from "../models/servicio-request.interface";
 import {
   ServicioById,
   ServicioResponse,
 } from "../models/servicio-response.interface";
-import { SignalRService } from '@shared/services/signalr.service';
+import { SignalRService } from "@shared/services/signalr.service";
+import { SignalR2Service } from "@shared/services/signalr2.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class ServicioService {
-  private servicioUpdateSubject: Subject<ServicioResponse> = new Subject<ServicioResponse>();
+  private servicioUpdateSubject: Subject<ServicioResponse> =
+    new Subject<ServicioResponse>();
 
-  constructor(private _http: HttpClient, private _alert: AlertService, private _signalRService: SignalRService,) {
+  constructor(
+    private _http: HttpClient,
+    private _alert: AlertService,
+    private _signalRService: SignalRService,
+    private _signalR2Service: SignalR2Service
+  ) {
     this.configureSignalRListeners();
   }
 
   private configureSignalRListeners(): void {
-    this._signalRService.getEventListener('ServicioBeneficioRegistrado').subscribe((response: ServicioResponse) => {
-      this.servicioUpdateSubject.next(response);
-    });
+    this._signalRService
+      .getEventListener("ServicioBeneficioRegistrado")
+      .subscribe((response: ServicioResponse) => {
+        this.servicioUpdateSubject.next(response);
+      });
 
-    this._signalRService.getEventListener('ServicioBeneficioActualizado').subscribe((response: ServicioResponse) => {
-      this.servicioUpdateSubject.next(response);
-    });
+    this._signalRService
+      .getEventListener("ServicioBeneficioActualizado")
+      .subscribe((response: ServicioResponse) => {
+        this.servicioUpdateSubject.next(response);
+      });
 
-    this._signalRService.getEventListener('ServicioBeneficioEliminado').subscribe((id: number) => {
-      this.servicioUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
-    });
+    this._signalR2Service
+      .getEventListener("ServicioBeneficioActualizado2")
+      .subscribe((response: ServicioResponse) => {
+        this.servicioUpdateSubject.next(response);
+      });
+
+    this._signalRService
+      .getEventListener("ServicioBeneficioEliminado")
+      .subscribe((id: number) => {
+        this.servicioUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
+      });
   }
 
   getUpdates(): Observable<ServicioResponse> {
@@ -70,6 +89,17 @@ export class ServicioService {
               break;
             default:
               prov.badgeColor = "text-gray bg-gray-light";
+              break;
+          }
+          switch (prov.programacion) {
+            case 0:
+              prov.badgeColor2 = "text-gray bg-gray-light";
+              break;
+            case 1:
+              prov.badgeColor2 = "text-green bg-green-light";
+              break;
+            default:
+              prov.badgeColor2 = "text-gray bg-gray-light";
               break;
           }
           prov.icEdit = getIcon("icEdit", "Editar Servicio y Beneficio", true);
@@ -107,6 +137,17 @@ export class ServicioService {
     formData.append("titulo", Servicio.titulo);
     formData.append("descripcion", Servicio.descripcion);
     formData.append("estado", Servicio.estado.toString());
+    formData.append("programacion", Servicio.programacion.toString());
+
+    // Verificar si programacion es igual a 0 y establecer fechaProgramacion en la fecha actual
+    if (Servicio.programacion === 0) {
+      formData.append("fechaProgramacion", this.getFormattedDate());
+    } else {
+      formData.append(
+        "fechaProgramacion",
+        Servicio.fechaProgramacion.toString()
+      );
+    }
 
     // Configurar los encabezados para la solicitud
     const headers = new HttpHeaders();
@@ -138,6 +179,17 @@ export class ServicioService {
     formData.append("titulo", Servicio.titulo);
     formData.append("descripcion", Servicio.descripcion);
     formData.append("estado", Servicio.estado.toString());
+    formData.append("programacion", Servicio.programacion.toString());
+
+    // Verificar si programacion es igual a 0 y establecer fechaProgramacion en la fecha actual
+    if (Servicio.programacion === 0) {
+      formData.append("fechaProgramacion", this.getFormattedDate());
+    } else {
+      formData.append(
+        "fechaProgramacion",
+        Servicio.fechaProgramacion.toString()
+      );
+    }
 
     // Configurar los encabezados para la solicitud
     const headers = new HttpHeaders();
@@ -157,5 +209,16 @@ export class ServicioService {
         }
       })
     );
+  }
+
+  getFormattedDate(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // +1 porque enero es 0
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 }

@@ -24,6 +24,8 @@ export class BoletinManageComponent implements OnInit {
       nombre: ["", [Validators.required]],
       estado: ["", [Validators.required]],
       imagen: [null], // Agregamos un campo para la imagen
+      programacion: [0, [Validators.required]], // Inicializado con valor 0 (no activo)
+      fechaProgramacion: [{ value: this.getFormattedDate(), disabled: true }],
     });
   }
 
@@ -45,10 +47,14 @@ export class BoletinManageComponent implements OnInit {
 
   boletinById(id: number): void {
     this._boletinService.boletinById(id).subscribe((resp) => {
+      const fechaProgramacion = new Date(resp.fechaProgramacion);
+
       this.form.reset({
         id: resp.id,
         nombre: resp.nombre,
         estado: resp.estado,
+        programacion: resp.programacion,
+        fechaProgramacion: fechaProgramacion.toISOString().slice(0, 16),
       });
       this.selectedImage = resp.imagen; // Cargamos la imagen existente para la vista previa
     });
@@ -106,5 +112,29 @@ export class BoletinManageComponent implements OnInit {
         this._alert.warn("Atención", resp.message);
       }
     });
+  }
+
+  onCheckboxChange(event: any): void {
+    const checked = event.checked ? 1 : 0;
+    this.form.get("programacion").setValue(checked);
+
+    const dateControl = this.form.get("fechaProgramacion");
+    if (checked === 1) {
+      dateControl.enable();
+    } else {
+      dateControl.setValue(this.getFormattedDate());
+      dateControl.disable();
+    }
+  }
+
+  getFormattedDate(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // +1 porque enero es 0
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 }

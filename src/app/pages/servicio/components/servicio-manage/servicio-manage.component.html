@@ -56,6 +56,24 @@
                 </mat-error>
             </mat-form-field>
         </div>
+
+        <div fxLayout="row" fxLayoutGap="16px">
+            <mat-checkbox formControlName="programacion" [checked]="form.get('programacion').value === 1"
+                (change)="onCheckboxChange($event)">
+                Programar
+            </mat-checkbox>
+        </div>
+        
+        <div fxLayout="row" fxLayoutGap="16px">
+            <mat-form-field appearance="outline" fxFlex="100">
+                <mat-label>Fecha y hora de programación</mat-label>
+                <input matInput type="datetime-local" formControlName="fechaProgramacion"
+                    [disabled]="!form.get('programacion').value" />
+                <mat-error *ngIf="form.get('fechaProgramacion').hasError('required')">
+                    Campo Fecha y hora de programación es requerido.
+                </mat-error>
+            </mat-form-field>
+        </div>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
