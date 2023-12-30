@@ -15,7 +15,7 @@ export class SignalR2Service {
 
   private initializeConnection(): void {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5000/hub", {
+      .withUrl("https://localhost:7215/hub2", {
         withCredentials: true,
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,

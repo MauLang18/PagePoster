@@ -1,13 +1,20 @@
-import { Injectable } from '@angular/core';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { Observable, Subject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  HttpTransportType,
+} from "@microsoft/signalr";
+import { Observable, Subject } from "rxjs";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class SignalRService {
   private hubConnection: HubConnection;
-  private eventsSubjectMap: Map<string, Subject<any>> = new Map<string, Subject<any>>();
+  private eventsSubjectMap: Map<string, Subject<any>> = new Map<
+    string,
+    Subject<any>
+  >();
 
   constructor() {
     this.initializeConnection();
@@ -15,16 +22,21 @@ export class SignalRService {
 
   private initializeConnection(): void {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7072/hub", {
+      .withUrl("https://localhost:7215/hub1", {
         withCredentials: true,
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets,
       })
       .build();
 
-    this.hubConnection.start()
+    this.hubConnection
+      .start()
       .then(() => {
-        console.log('SignalR connection started');
+        console.log("SignalR connection started");
       })
-      .catch(err => console.error('Error while establishing SignalR connection:', err));
+      .catch((err) =>
+        console.error("Error while establishing SignalR connection:", err)
+      );
   }
 
   public configureListener(eventName: string): void {
