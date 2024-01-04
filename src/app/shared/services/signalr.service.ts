@@ -22,7 +22,7 @@ export class SignalRService {
 
   private initializeConnection(): void {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7215/hub1", {
+      .withUrl("https://apiadmin.tranquiexpress.com:8443/hub1", {
         withCredentials: true,
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
