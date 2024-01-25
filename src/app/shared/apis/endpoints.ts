@@ -39,6 +39,14 @@ export const endpoints = {
   REGISTER_SERVICIO: "ServicioBeneficio/Register",
   EDIT_SERVICIO: "ServicioBeneficio/Edit/",
   REMOVE_SERVICIO: "ServicioBeneficio/Remove/",
+
+  //EMPRESA MODULE
+  LIST_EMPRESA: "Empresa",
+  LIST_SELECT_EMPRESA: "Empresa/Select",
+  EMPRESA_BY_ID: "Empresa/",
+  REGISTER_EMPRESA: "Empresa/Register",
+  EDIT_EMPRESA: "Empresa/Edit/",
+  REMOVE_EMPRESA: "Empresa/Remove/",
 };
 
 export const httpOptions = {

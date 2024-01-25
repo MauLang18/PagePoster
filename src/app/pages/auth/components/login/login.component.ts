@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { IconsService } from "@shared/services/icons.service";
 import { AuthService } from "../../services/auth.service";
+import { EmpresaService } from "@shared/services/empresa.service";
+import { Empresa } from "@shared/models/empresa.interface";
+import { Login } from "../../models/login.interfaces";
 
 @Component({
   selector: "vex-login",
@@ -14,6 +17,8 @@ export class LoginComponent implements OnInit {
   inputType = "password";
   visible = false;
 
+  empresas: Empresa[];
+
   icVisibility = IconsService.prototype.getIcon("icVisibility");
   icVisibilityOff = IconsService.prototype.getIcon("icVisibilityOff");
 
@@ -21,6 +26,7 @@ export class LoginComponent implements OnInit {
     this.form = this.fb.group({
       usuario: ["", [Validators.required]],
       pass: ["", [Validators.required]],
+      empresa: [""]
     });
   }
 
@@ -28,11 +34,20 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private _empresaService: EmpresaService
   ) {}
 
   ngOnInit(): void {
+    this.listEmpresas();
+
     this.initForm();
+  }
+
+  listEmpresas(): void {
+    this._empresaService.listEmpresa().subscribe((resp) => {
+      this.empresas = resp;
+    });
   }
 
   login(): void {
@@ -42,7 +57,16 @@ export class LoginComponent implements OnInit {
       });
     }
 
-    this.authService.login(this.form.value).subscribe((resp) => {
+    const { usuario, pass, empresa } = this.form.value;
+
+    const loginData: Login = {
+      usuario: usuario,
+      pass: pass
+    };
+
+    localStorage.setItem("authType", empresa);
+
+    this.authService.login(loginData).subscribe((resp) => {
       if (resp.isSuccess) {
         this.router.navigate(["/"]);
       }

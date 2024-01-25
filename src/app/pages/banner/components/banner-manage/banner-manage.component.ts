@@ -18,6 +18,8 @@ export class BannerManageComponent implements OnInit {
   form: FormGroup;
   selectedImage: string | undefined;
 
+  empresaIdFromStorage = parseInt(localStorage.getItem("authType"), 10);
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     private _fb: FormBuilder,
@@ -38,6 +40,7 @@ export class BannerManageComponent implements OnInit {
     this.form = this._fb.group({
       id: [0, [Validators.required]],
       nombre: ["", [Validators.required]],
+      empresaId: [this.empresaIdFromStorage],
       estado: ["", [Validators.required]],
       imagen: [null],
       programacion: [0], // Inicializado con valor 0 (no activo)
@@ -52,6 +55,7 @@ export class BannerManageComponent implements OnInit {
       this.form.patchValue({
         id: resp.id,
         nombre: resp.nombre,
+        empresaId: resp.empresaId,
         estado: resp.estado,
         programacion: resp.programacion,
         fechaProgramacion: fechaProgramacion.toISOString().slice(0, 16), // Formato de hora 'HH:MM'

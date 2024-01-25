@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { PopoverService } from '../../../components/popover/popover.service';
 import { ToolbarUserDropdownComponent } from './toolbar-user-dropdown/toolbar-user-dropdown.component';
 import icPerson from '@iconify/icons-ic/twotone-person';
+import { EmpresaService } from '@shared/services/empresa.service';
+import { Empresa } from '@shared/models/empresa.interface';
 
 @Component({
   selector: 'vex-toolbar-user',
@@ -16,7 +18,8 @@ export class ToolbarUserComponent implements OnInit {
   username: string;
 
   constructor(private popover: PopoverService,
-              private cd: ChangeDetectorRef) { }
+              private cd: ChangeDetectorRef,
+              private _empresaService: EmpresaService) { }
 
   ngOnInit() {
     const token = localStorage.getItem("token");
@@ -26,6 +29,15 @@ export class ToolbarUserComponent implements OnInit {
 
     var dataUser = JSON.parse(atob(token.split(".")[1]));
     this.username = dataUser.family_name;
+
+    this._empresaService.empresaById(parseInt(localStorage.getItem("authType"), 10)).subscribe(
+      (resultado: Empresa) => {
+        localStorage.setItem("empresa", resultado.empresa);
+      },
+      error => {
+        console.error('Error al obtener la empresa:', error);
+      }
+    );
   }
 
   showPopover(originRef: HTMLElement) {

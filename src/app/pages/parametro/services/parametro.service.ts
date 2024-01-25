@@ -8,7 +8,7 @@ import {
 } from "@shared/models/base-api-response.interface";
 import { AlertService } from "@shared/services/alert.service";
 import { Observable, Subject } from 'rxjs';
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import {
   ParametroById,
   ParametroResponse,
@@ -50,12 +50,15 @@ export class ParametroService {
     page: number,
     getInputs: string
   ): Observable<BaseApiResponse> {
+    // Obtener empresaId almacenado en localStorage
+    const empresaIdFromStorage = parseInt(localStorage.getItem("authType"), 10);
+  
     const requestUrl = `${env.api}${
       endpoints.LIST_PARAMETRO
     }?records=${size}&sort=${sort}&order=${order}&numPage=${
       page + 1
     }${getInputs}`;
-
+  
     return this._http.get<BaseApiResponse>(requestUrl).pipe(
       map((resp) => {
         resp.data.items.forEach(function (prov: ParametroResponse) {
@@ -72,10 +75,14 @@ export class ParametroService {
           }
           prov.icEdit = getIcon("icEdit", "Editar Parámetro", true);
         });
+        
+        // Filter items based on empresaId
+        resp.data.items = resp.data.items.filter((prov: ParametroResponse) => prov.empresaId === empresaIdFromStorage);
+  
         return resp;
       })
     );
-  }
+  }  
 
   parametroById(id: number): Observable<ParametroById> {
     const requestUrl = `${env.api}${endpoints.PARAMETRO_BY_ID}${id}`;

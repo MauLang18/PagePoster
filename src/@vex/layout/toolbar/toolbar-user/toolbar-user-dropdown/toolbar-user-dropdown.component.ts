@@ -26,6 +26,8 @@ import { Icon } from "@visurel/iconify-angular";
 import { PopoverRef } from "../../../../components/popover/popover-ref";
 import { MsalService } from "@azure/msal-angular";
 import { AuthService } from "src/app/pages/auth/services/auth.service";
+import { EmpresaService } from "@shared/services/empresa.service";
+import { Empresa } from "@shared/models/empresa.interface";
 
 export interface OnlineStatus {
   id: "online" | "away" | "dnd" | "offline";
@@ -117,10 +119,13 @@ export class ToolbarUserDropdownComponent implements OnInit {
 
   username: string;
 
+  empresa: string;
+
   constructor(
     private cd: ChangeDetectorRef,
     private authService: AuthService,
-    private popoverRef: PopoverRef<ToolbarUserDropdownComponent>
+    private popoverRef: PopoverRef<ToolbarUserDropdownComponent>,
+    private _empresaService: EmpresaService
   ) {}
 
   ngOnInit() {
@@ -131,6 +136,8 @@ export class ToolbarUserDropdownComponent implements OnInit {
 
     var dataUser = JSON.parse(atob(token.split(".")[1]));
     this.username = dataUser.family_name;
+
+    this.empresa = localStorage.getItem("empresa");
   }
 
   setStatus(status: OnlineStatus) {

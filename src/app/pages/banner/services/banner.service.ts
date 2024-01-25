@@ -8,7 +8,7 @@ import { AlertService } from "@shared/services/alert.service";
 import { Observable, Subject } from "rxjs";
 import { environment as env } from "./../../../../environments/environment";
 import { endpoints } from "@shared/apis/endpoints";
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import {
   BannerById,
   BannerResponse,
@@ -16,7 +16,6 @@ import {
 import { getIcon } from "@shared/functions/helpers";
 import { BannerRequest } from "../models/banner-request.interface";
 import { SignalRService } from "@shared/services/signalr.service";
-import { SignalR2Service } from "@shared/services/signalr2.service";
 
 @Injectable({
   providedIn: "root",
@@ -28,8 +27,7 @@ export class BannerService {
   constructor(
     private _http: HttpClient,
     private _alert: AlertService,
-    private _signalRService: SignalRService,
-    private _signalR2Service: SignalR2Service
+    private _signalRService: SignalRService
   ) {
     this.configureSignalRListeners();
   }
@@ -43,12 +41,6 @@ export class BannerService {
 
     this._signalRService
       .getEventListener("BannerActualizado")
-      .subscribe((response: BannerResponse) => {
-        this.bannerUpdateSubject.next(response);
-      });
-
-    this._signalR2Service
-      .getEventListener("BannerActualizado2")
       .subscribe((response: BannerResponse) => {
         this.bannerUpdateSubject.next(response);
       });
@@ -71,12 +63,11 @@ export class BannerService {
     page: number,
     getInputs: string
   ): Observable<BaseApiResponse> {
-    const requestUrl = `${env.api}${
-      endpoints.LIST_BANNER
-    }?records=${size}&sort=${sort}&order=${order}&numPage=${
-      page + 1
-    }${getInputs}`;
-
+    const requestUrl = `${env.api}${endpoints.LIST_BANNER}?records=${size}&sort=${sort}&order=${order}&numPage=${page + 1}${getInputs}`;
+  
+    // Obtener empresaId almacenado en localStorage
+    const empresaIdFromStorage = parseInt(localStorage.getItem("authType"), 10);
+  
     return this._http.get<BaseApiResponse>(requestUrl).pipe(
       map((resp) => {
         resp.data.items.forEach(function (prov: BannerResponse) {
@@ -105,6 +96,10 @@ export class BannerService {
           prov.icEdit = getIcon("icEdit", "Editar Banner", true);
           prov.icDelete = getIcon("icDelete", "Eliminar Banner", true);
         });
+
+        // Filter items based on empresaId
+        resp.data.items = resp.data.items.filter((prov: BannerResponse) => prov.empresaId === empresaIdFromStorage);
+
         return resp;
       })
     );
@@ -131,6 +126,7 @@ export class BannerService {
 
     // Agregar otros campos de formulario según sea necesario
     formData.append("nombre", banner.nombre);
+    formData.append("empresaId", banner.empresaId.toString());
     formData.append("estado", banner.estado.toString());
     formData.append("programacion", banner.programacion.toString());
 
@@ -166,6 +162,8 @@ export class BannerService {
 
     // Agregar otros campos de formulario según sea necesario
     formData.append("nombre", banner.nombre);
+    formData.append("estado", banner.estado.toString());
+    formData.append("empresaId", banner.empresaId.toString());
     formData.append("estado", banner.estado.toString());
     formData.append("programacion", banner.programacion.toString());
 

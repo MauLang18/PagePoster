@@ -29,6 +29,18 @@
           <mat-icon *ngIf="!visible" [icIcon]="icVisibilityOff"></mat-icon>
         </button>
       </mat-form-field>
+      <mat-form-field appearance="outline" class="textbox">
+        <mat-label>Empresa</mat-label>
+        <mat-select
+          formControlName="empresa"
+          (selectionChange)="listEmpresas()">
+          <mat-option
+            *ngFor="let item of empresas"
+            [value]="item.id">
+            {{ item.empresa }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <button type="submit" color="primary" mat-raised-button>
         Iniciar Sesión
       </button>

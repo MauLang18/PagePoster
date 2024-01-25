@@ -62,6 +62,7 @@ export class AuthService {
   logout(){
     localStorage.removeItem("token");
     localStorage.removeItem("authType");
+    localStorage.removeItem("empresa");
     this.user.next(null);
     window.location.reload();
   }

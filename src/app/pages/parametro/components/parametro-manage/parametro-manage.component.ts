@@ -15,6 +15,8 @@ export class ParametroManageComponent implements OnInit {
   icClose = IconsService.prototype.getIcon("icClose");
   configs = configs;
 
+  empresaIdFromStorage = parseInt(localStorage.getItem("authType"), 10);
+
   form: FormGroup;
 
   initForm(): void {
@@ -23,6 +25,7 @@ export class ParametroManageComponent implements OnInit {
       parametro: ["", [Validators.required]],
       descripcion: ["", [Validators.required]],
       valor: ["", [Validators.required]],
+      empresaId: [this.empresaIdFromStorage],
       estado: ["", [Validators.required]],
     });
   }
@@ -50,6 +53,7 @@ export class ParametroManageComponent implements OnInit {
         parametro: resp.parametro,
         descripcion: resp.descripcion,
         valor: resp.valor,
+        empresaId: resp.empresaId,
         estado: resp.estado,
       });
     });

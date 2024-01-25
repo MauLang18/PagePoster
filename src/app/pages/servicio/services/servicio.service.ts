@@ -3,7 +3,7 @@ import {
   BaseApiResponse,
   BaseResponse,
 } from "@shared/models/base-api-response.interface";
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { environment as env } from "./../../../../environments/environment";
 import { endpoints } from "@shared/apis/endpoints";
 import { getIcon } from "@shared/functions/helpers";
@@ -16,7 +16,6 @@ import {
   ServicioResponse,
 } from "../models/servicio-response.interface";
 import { SignalRService } from "@shared/services/signalr.service";
-import { SignalR2Service } from "@shared/services/signalr2.service";
 
 @Injectable({
   providedIn: "root",
@@ -28,8 +27,7 @@ export class ServicioService {
   constructor(
     private _http: HttpClient,
     private _alert: AlertService,
-    private _signalRService: SignalRService,
-    private _signalR2Service: SignalR2Service
+    private _signalRService: SignalRService
   ) {
     this.configureSignalRListeners();
   }
@@ -43,12 +41,6 @@ export class ServicioService {
 
     this._signalRService
       .getEventListener("ServicioBeneficioActualizado")
-      .subscribe((response: ServicioResponse) => {
-        this.servicioUpdateSubject.next(response);
-      });
-
-    this._signalR2Service
-      .getEventListener("ServicioBeneficioActualizado2")
       .subscribe((response: ServicioResponse) => {
         this.servicioUpdateSubject.next(response);
       });
@@ -76,6 +68,9 @@ export class ServicioService {
     }?records=${size}&sort=${sort}&order=${order}&numPage=${
       page + 1
     }${getInputs}`;
+
+    // Obtener empresaId almacenado en localStorage
+    const empresaIdFromStorage = parseInt(localStorage.getItem("authType"), 10);
 
     return this._http.get<BaseApiResponse>(requestUrl).pipe(
       map((resp) => {
@@ -109,6 +104,10 @@ export class ServicioService {
             true
           );
         });
+
+        // Filter items based on empresaId
+        resp.data.items = resp.data.items.filter((prov: ServicioResponse) => prov.empresaId === empresaIdFromStorage);
+
         return resp;
       })
     );
@@ -136,6 +135,7 @@ export class ServicioService {
     // Agregar otros campos de formulario según sea necesario
     formData.append("titulo", Servicio.titulo);
     formData.append("descripcion", Servicio.descripcion);
+    formData.append("empresaId", Servicio.empresaId.toString());
     formData.append("estado", Servicio.estado.toString());
     formData.append("programacion", Servicio.programacion.toString());
 
@@ -178,6 +178,7 @@ export class ServicioService {
     // Agregar otros campos de formulario según sea necesario
     formData.append("titulo", Servicio.titulo);
     formData.append("descripcion", Servicio.descripcion);
+    formData.append("empresaId", Servicio.empresaId.toString());
     formData.append("estado", Servicio.estado.toString());
     formData.append("programacion", Servicio.programacion.toString());
 

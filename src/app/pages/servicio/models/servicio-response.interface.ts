@@ -4,6 +4,7 @@ export interface ServicioResponse {
   descripcion: string;
   imagen: string;
   fechaCreacionAuditoria: Date;
+  empresaId: number;
   estado: number;
   programacion: number;
   fechaProgramacion: Date;
@@ -20,6 +21,7 @@ export interface ServicioById {
   titulo: string;
   descripcion: string;
   imagen: string;
+  empresaId: number;
   estado: number;
   programacion: number;
   fechaProgramacion: Date;

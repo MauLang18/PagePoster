@@ -4,6 +4,7 @@ export interface ParametroResponse {
   descripcion: string;
   valor: string;
   fechaCreacionAuditoria: Date;
+  empresaId: number;
   estado: number;
   estadoParametro: string;
   badgeColor: string;
@@ -16,5 +17,6 @@ export interface ParametroById {
   parametro: string;
   descripcion: string;
   valor: string;
+  empresaId: number;
   estado: number;
 }

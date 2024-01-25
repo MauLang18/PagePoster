@@ -12,11 +12,10 @@ import {
   BoletinById,
   BoletinResponse,
 } from "../models/boletin-response.interface";
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { getIcon } from "@shared/functions/helpers";
 import { BoletinRequest } from "../models/boletin-request.interface";
 import { SignalRService } from "@shared/services/signalr.service";
-import { SignalR2Service } from "@shared/services/signalr2.service";
 
 @Injectable({
   providedIn: "root",
@@ -28,8 +27,7 @@ export class BoletinService {
   constructor(
     private _http: HttpClient,
     private _alert: AlertService,
-    private _signalRService: SignalRService,
-    private _signalR2Service: SignalR2Service
+    private _signalRService: SignalRService
   ) {
     this.configureSignalRListeners();
   }
@@ -43,12 +41,6 @@ export class BoletinService {
 
     this._signalRService
       .getEventListener("BoletinActualizado")
-      .subscribe((response: BoletinResponse) => {
-        this.boletinUpdateSubject.next(response);
-      });
-
-    this._signalR2Service
-      .getEventListener("BoletinActualizado2")
       .subscribe((response: BoletinResponse) => {
         this.boletinUpdateSubject.next(response);
       });
@@ -76,6 +68,9 @@ export class BoletinService {
     }?records=${size}&sort=${sort}&order=${order}&numPage=${
       page + 1
     }${getInputs}`;
+
+    // Obtener empresaId almacenado en localStorage
+    const empresaIdFromStorage = parseInt(localStorage.getItem("authType"), 10);
 
     return this._http.get<BaseApiResponse>(requestUrl).pipe(
       map((resp) => {
@@ -105,6 +100,10 @@ export class BoletinService {
           prov.icEdit = getIcon("icEdit", "Editar Boletín", true);
           prov.icDelete = getIcon("icDelete", "Eliminar Boletín", true);
         });
+
+        // Filter items based on empresaId
+        resp.data.items = resp.data.items.filter((prov: BoletinResponse) => prov.empresaId === empresaIdFromStorage);
+
         return resp;
       })
     );
@@ -131,6 +130,7 @@ export class BoletinService {
 
     // Agregar otros campos de formulario según sea necesario
     formData.append("nombre", boletin.nombre);
+    formData.append("empresaId", boletin.empresaId.toString());
     formData.append("estado", boletin.estado.toString());
     formData.append("programacion", boletin.programacion.toString());
 
@@ -172,6 +172,7 @@ export class BoletinService {
 
     // Agregar otros campos de formulario según sea necesario
     formData.append("nombre", boletin.nombre);
+    formData.append("empresaId", boletin.empresaId.toString());
     formData.append("estado", boletin.estado.toString());
     formData.append("programacion", boletin.programacion.toString());
 

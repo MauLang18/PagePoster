@@ -18,11 +18,14 @@ export class ServicioManageComponent implements OnInit {
   form: FormGroup;
   selectedImage: string | undefined; // Agregamos una propiedad para la vista previa de la imagen
 
+  empresaIdFromStorage = parseInt(localStorage.getItem("authType"), 10);
+
   initForm(): void {
     this.form = this._fb.group({
       id: [0, [Validators.required]],
       titulo: ["", [Validators.required]],
       descripcion: ["", [Validators.required]],
+      empresaId: [this.empresaIdFromStorage],
       estado: ["", [Validators.required]],
       imagen: [null], // Agregamos un campo para la imagen
       programacion: [0, [Validators.required]], // Inicializado con valor 0 (no activo)
@@ -54,6 +57,7 @@ export class ServicioManageComponent implements OnInit {
         id: resp.id,
         titulo: resp.titulo,
         descripcion: resp.descripcion,
+        empresaId: resp.empresaId,
         estado: resp.estado,
         programacion: resp.programacion,
         fechaProgramacion: fechaProgramacion.toISOString().slice(0, 16),

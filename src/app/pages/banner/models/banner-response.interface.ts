@@ -3,6 +3,7 @@ export interface BannerResponse {
   nombre: string;
   imagen: string;
   fechaCreacionAuditoria: Date;
+  empresaId: number;
   estado: number;
   programacion: number;
   fechaProgramacion: Date;
@@ -18,6 +19,7 @@ export interface BannerById {
   id: number;
   nombre: string;
   imagen: string;
+  empresaId: number;
   estado: number;
   programacion: number;
   fechaProgramacion: Date;
