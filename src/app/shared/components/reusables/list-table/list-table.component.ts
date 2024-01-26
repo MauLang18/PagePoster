@@ -82,6 +82,8 @@ export class ListTableComponent<T> implements OnInit, AfterViewInit, OnChanges {
     pageLength: 0,
   };
 
+  empresa = parseInt(localStorage.getItem("authType"), 10);
+
   constructor(
     private _spinner: NgxSpinnerService,
     private _alert: AlertService
@@ -131,6 +133,7 @@ export class ListTableComponent<T> implements OnInit, AfterViewInit, OnChanges {
             this.sort.active,
             this.sort.direction,
             this.paginator.pageIndex,
+            this.empresa,
             this.getInputs
           );
         })

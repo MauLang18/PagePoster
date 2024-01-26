@@ -61,13 +61,14 @@ export class BoletinService {
     sort: string,
     order: string,
     page: number,
+    empresa: number,
     getInputs: string
   ): Observable<BaseApiResponse> {
     const requestUrl = `${env.api}${
       endpoints.LIST_BOLETIN
     }?records=${size}&sort=${sort}&order=${order}&numPage=${
       page + 1
-    }${getInputs}`;
+    }&empresa=${empresa}${getInputs}`;
 
     // Obtener empresaId almacenado en localStorage
     const empresaIdFromStorage = parseInt(localStorage.getItem("authType"), 10);

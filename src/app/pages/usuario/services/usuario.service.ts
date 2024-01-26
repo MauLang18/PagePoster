@@ -54,13 +54,14 @@ export class UsuarioService {
     sort: string,
     order: string,
     page: number,
+    empresa: number,
     getInputs: string
   ): Observable<BaseApiResponse> {
     const requestUrl = `${env.api}${
       endpoints.LIST_USUARIOS
     }?records=${size}&sort=${sort}&order=${order}&numPage=${
       page + 1
-    }${getInputs}`;
+    }&empresa=${empresa}${getInputs}`;
 
     return this._http.get<BaseApiResponse>(requestUrl).pipe(
       map((resp) => {

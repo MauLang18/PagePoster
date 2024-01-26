@@ -12,7 +12,7 @@ export abstract class DefaultService {
    * Returns a list of all items
    */
 
-  abstract GetAll(size: number, sort: string, order: string, page: number, getInputs: string, id?: number, id2?:number): Observable<any>;
+  abstract GetAll(size: number, sort: string, order: string, page: number, empresa: number, getInputs: string, id?: number, id2?:number): Observable<any>;
   abstract GetSimple(attr:{}): Observable<any>;
   abstract getUpdates(): Observable<any>;
 }

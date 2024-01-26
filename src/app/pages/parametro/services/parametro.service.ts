@@ -48,6 +48,7 @@ export class ParametroService {
     sort: string,
     order: string,
     page: number,
+    empresa: number,
     getInputs: string
   ): Observable<BaseApiResponse> {
     // Obtener empresaId almacenado en localStorage
@@ -57,7 +58,7 @@ export class ParametroService {
       endpoints.LIST_PARAMETRO
     }?records=${size}&sort=${sort}&order=${order}&numPage=${
       page + 1
-    }${getInputs}`;
+    }&empresa=${empresa}${getInputs}`;
   
     return this._http.get<BaseApiResponse>(requestUrl).pipe(
       map((resp) => {
