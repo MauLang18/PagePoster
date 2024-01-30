@@ -32,11 +32,21 @@ export class UsuarioService {
   }
 
   private configureSignalRListeners(): void {
-    this._signalRService.getEventListener('PublishCore').subscribe((response: UsuarioResponse) => {
-      // Verificar si "dirigido" es usuarioRegistrado, usuarioActualizado o usuarioEliminado
-      const allowedDirigidos = ['usuarioRegistrado', 'usuarioActualizado', 'usuarioEliminado'];
-      if (allowedDirigidos.includes(response.dirigido)) {
-        this.usuarioUpdateSubject.next(response);
+    this._signalRService.getEventListener('PublishCore').subscribe((data: string) => {
+      try {
+        const item = JSON.parse(data);
+    
+        const allowedDirigidos = ['usuarioRegistrado', 'usuarioActualizado', 'usuarioEliminado'];
+    
+        if (item && allowedDirigidos.includes(item.Dirigido)) {
+          const storedEmpresaId = localStorage.getItem("authType");
+          if (item.EmpresaId === parseInt(storedEmpresaId)) {
+            // Llamar a la función de actualización
+            this.usuarioUpdateSubject.next(item);
+          }
+        }
+      } catch (error) {
+        console.error("Error al parsear el JSON:", error);
       }
     });
   }

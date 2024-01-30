@@ -33,16 +33,21 @@ export class BoletinService {
   }
 
   private configureSignalRListeners(): void {
-    this._signalRService.getEventListener('PublishCore').subscribe((response: BoletinResponse) => {
-      // Verificar si "dirigido" es boletinRegistrado, boletinActualizado o boletinEliminado
-      const allowedDirigidos = ['boletinRegistrado', 'boletinActualizado', 'boletinEliminado'];
-      if (allowedDirigidos.includes(response.dirigido)) {
-        // Verificar si el "empresaId" es igual al valor almacenado en localStorage
-        const storedEmpresaId = localStorage.getItem("authType");
-        if (response.empresaId === parseInt(storedEmpresaId)) {
-          // Llamar a la función de actualización
-          this.boletinUpdateSubject.next(response);
+    this._signalRService.getEventListener('PublishCore').subscribe((data: string) => {
+      try {
+        const item = JSON.parse(data);
+    
+        const allowedDirigidos = ['boletinRegistrado', 'boletinActualizado', 'boletinEliminado'];
+    
+        if (item && allowedDirigidos.includes(item.Dirigido)) {
+          const storedEmpresaId = localStorage.getItem("authType");
+          if (item.EmpresaId === parseInt(storedEmpresaId)) {
+            // Llamar a la función de actualización
+            this.boletinUpdateSubject.next(item);
+          }
         }
+      } catch (error) {
+        console.error("Error al parsear el JSON:", error);
       }
     });
   }
