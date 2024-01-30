@@ -33,7 +33,11 @@ export class UsuarioService {
 
   private configureSignalRListeners(): void {
     this._signalRService.getEventListener('PublishCore').subscribe((response: UsuarioResponse) => {
-      this.usuarioUpdateSubject.next(response);
+      // Verificar si "dirigido" es usuarioRegistrado, usuarioActualizado o usuarioEliminado
+      const allowedDirigidos = ['usuarioRegistrado', 'usuarioActualizado', 'usuarioEliminado'];
+      if (allowedDirigidos.includes(response.dirigido)) {
+        this.usuarioUpdateSubject.next(response);
+      }
     });
   }
 

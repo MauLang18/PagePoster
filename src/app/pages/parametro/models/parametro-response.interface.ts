@@ -10,6 +10,7 @@ export interface ParametroResponse {
   badgeColor: string;
   icEdit: any;
   icDelete: any;
+  dirigido: string;
 }
 
 export interface ParametroById {

@@ -14,6 +14,7 @@ export interface ServicioResponse {
   badgeColor2: string;
   icEdit: any;
   icDelete: any;
+  dirigido: string;
 }
 
 export interface ServicioById {

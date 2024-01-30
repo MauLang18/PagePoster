@@ -33,11 +33,18 @@ export class BannerService {
   }
 
   private configureSignalRListeners(): void {
-    this._signalRService
-      .getEventListener("PublishCore")
-      .subscribe((response: BannerResponse) => {
-        this.bannerUpdateSubject.next(response);
-      });
+    this._signalRService.getEventListener('PublishCore').subscribe((response: BannerResponse) => {
+      // Verificar si "dirigido" es bannerRegistrado, bannerActualizado o bannerEliminado
+      const allowedDirigidos = ['bannerRegistrado', 'bannerActualizado', 'bannerEliminado'];
+      if (allowedDirigidos.includes(response.dirigido)) {
+        // Verificar si el "empresaId" es igual al valor almacenado en localStorage
+        const storedEmpresaId = localStorage.getItem("authType");
+        if (response.empresaId === parseInt(storedEmpresaId)) {
+          // Llamar a la función de actualización
+          this.bannerUpdateSubject.next(response);
+        }
+      }
+    });
   }
 
   getUpdates(): Observable<BannerResponse> {

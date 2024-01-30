@@ -8,6 +8,7 @@ export interface UsuarioResponse {
   estadoUsuario: string;
   icEdit: any;
   icDelete: any;
+  dirigido: string;
 }
 
 export interface UsuarioById {

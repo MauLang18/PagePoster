@@ -27,7 +27,16 @@ export class ParametroService {
 
   private configureSignalRListeners(): void {
     this._signalRService.getEventListener('PublishCore').subscribe((response: ParametroResponse) => {
-      this.parametroUpdateSubject.next(response);
+      // Verificar si "dirigido" es parametroRegistrado, parametroActualizado o parametroEliminado
+      const allowedDirigidos = ['parametroRegistrado', 'parametroActualizado', 'parametroEliminado'];
+      if (allowedDirigidos.includes(response.dirigido)) {
+        // Verificar si el "empresaId" es igual al valor almacenado en localStorage
+        const storedEmpresaId = localStorage.getItem("authType");
+        if (response.empresaId === parseInt(storedEmpresaId)) {
+          // Llamar a la función de actualización
+          this.parametroUpdateSubject.next(response);
+        }
+      }
     });
   }
 
