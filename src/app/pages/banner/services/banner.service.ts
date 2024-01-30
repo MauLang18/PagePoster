@@ -34,21 +34,9 @@ export class BannerService {
 
   private configureSignalRListeners(): void {
     this._signalRService
-      .getEventListener("BannerRegistrado")
+      .getEventListener("PublishCore")
       .subscribe((response: BannerResponse) => {
         this.bannerUpdateSubject.next(response);
-      });
-
-    this._signalRService
-      .getEventListener("BannerActualizado")
-      .subscribe((response: BannerResponse) => {
-        this.bannerUpdateSubject.next(response);
-      });
-
-    this._signalRService
-      .getEventListener("BannerEliminado")
-      .subscribe((id: number) => {
-        this.bannerUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
       });
   }
 

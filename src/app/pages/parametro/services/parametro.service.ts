@@ -26,16 +26,8 @@ export class ParametroService {
   constructor(private _http: HttpClient, private _alert: AlertService, private _signalRService: SignalRService,) {this.configureSignalRListeners();}
 
   private configureSignalRListeners(): void {
-    this._signalRService.getEventListener('ParametroRegistrado').subscribe((response: ParametroResponse) => {
+    this._signalRService.getEventListener('PublishCore').subscribe((response: ParametroResponse) => {
       this.parametroUpdateSubject.next(response);
-    });
-
-    this._signalRService.getEventListener('ParametroActualizado').subscribe((response: ParametroResponse) => {
-      this.parametroUpdateSubject.next(response);
-    });
-
-    this._signalRService.getEventListener('ParametroEliminado').subscribe((id: number) => {
-      this.parametroUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
     });
   }
 

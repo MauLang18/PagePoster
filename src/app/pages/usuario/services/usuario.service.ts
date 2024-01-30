@@ -32,16 +32,8 @@ export class UsuarioService {
   }
 
   private configureSignalRListeners(): void {
-    this._signalRService.getEventListener('UsuarioRegistrado').subscribe((response: UsuarioResponse) => {
+    this._signalRService.getEventListener('PublishCore').subscribe((response: UsuarioResponse) => {
       this.usuarioUpdateSubject.next(response);
-    });
-
-    this._signalRService.getEventListener('UsuarioActualizado').subscribe((response: UsuarioResponse) => {
-      this.usuarioUpdateSubject.next(response);
-    });
-
-    this._signalRService.getEventListener('UsuarioEliminado').subscribe((id: number) => {
-      this.usuarioUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
     });
   }
 

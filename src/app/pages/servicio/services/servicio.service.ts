@@ -34,21 +34,9 @@ export class ServicioService {
 
   private configureSignalRListeners(): void {
     this._signalRService
-      .getEventListener("ServicioBeneficioRegistrado")
+      .getEventListener("PublishCore")
       .subscribe((response: ServicioResponse) => {
         this.servicioUpdateSubject.next(response);
-      });
-
-    this._signalRService
-      .getEventListener("ServicioBeneficioActualizado")
-      .subscribe((response: ServicioResponse) => {
-        this.servicioUpdateSubject.next(response);
-      });
-
-    this._signalRService
-      .getEventListener("ServicioBeneficioEliminado")
-      .subscribe((id: number) => {
-        this.servicioUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
       });
   }
 

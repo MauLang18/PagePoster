@@ -34,21 +34,9 @@ export class BoletinService {
 
   private configureSignalRListeners(): void {
     this._signalRService
-      .getEventListener("BoletinRegistrado")
+      .getEventListener("PublishCore")
       .subscribe((response: BoletinResponse) => {
         this.boletinUpdateSubject.next(response);
-      });
-
-    this._signalRService
-      .getEventListener("BoletinActualizado")
-      .subscribe((response: BoletinResponse) => {
-        this.boletinUpdateSubject.next(response);
-      });
-
-    this._signalRService
-      .getEventListener("BoletinEliminado")
-      .subscribe((id: number) => {
-        this.boletinUpdateSubject.next(null); // Emitir un evento para indicar la eliminación
       });
   }
 
